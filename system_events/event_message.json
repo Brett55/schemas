@@ -1,0 +1,191 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "id": "urn:jsonschema:com:digitalglobe:events:EventMessage",
+    "properties": {
+        "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Component or sub-system (eg Workflow, Catalog, etc) that emits the event."
+        },
+        "action": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Action that was taken that generated the event.  Eg: 'created', 'deleted', 'cataloged', 'state changed'"
+        },
+        "userId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+        },
+        "accountId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+        },
+        
+        "entity": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Object that was affected by the action.  Eg. Workflow, Task."
+        },
+        
+        "properties": {
+            "type": "object",
+            "description": "Properties of the message."
+        },
+        "payload": {
+            "type": "object",
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/WorkflowEvent"
+                },
+                {
+                    "$ref": "#/definitions/TaskEvent"
+                },
+                {
+                    "$ref": "#/definitions/DeciderEvent"
+                },
+                {
+                    "$ref": "#/definitions/OrderingEvent"
+                },
+                {
+                    "$ref": "#/definitions/ProductCatalogerEvent"
+                },
+                {
+                    "$ref": "#/definitions/AcquisitionCatalogerEvent"
+                },
+                {
+                    "$ref": "#/definitions/AuthEvent"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "WorkflowEvent": {
+            "type": "object",
+            "properties": {
+                "workflow_id": {
+                    "type": "string"
+                },
+                "workflow_name": {
+                    "type": "string"
+                },
+                "workflow_state": {
+                    "enum": [
+                        "submitted",
+                        "canceled",
+                        "failed",
+                        "succeeded",
+                        "timedout"
+                    ]
+                }
+            },
+            "required": [
+                "workflow_id",
+                "workflow_name",
+                "workflow_state"
+            ]
+        },
+        "TaskEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/WorkflowEvent"
+                },
+                {
+                    "properties": {
+                        "task_id": {
+                            "type": "string"
+                        },
+                        "task_name": {
+                            "type": "string"
+                        },
+                        "task_type": {
+                            "type": "string"
+                        },
+                        "task_domain": {
+                            "type": "string"
+                        },
+                        "instance_id": {
+                            "type": "string"
+                        },
+                        "instance_size": {
+                            "type": "string"
+                        },
+                        "task_state": {
+                            "enum": [
+                                "submitted",
+                                "scheduled",
+                                "started",
+                                "canceling",
+                                "canceled",
+                                "failed",
+                                "succeeded",
+                                "timedout"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "task_id",
+                        "task_name",
+                        "task_type"
+                    ]
+                }
+            ]
+        },
+        "DeciderEvent": {
+            "type": "object",
+            "properties": {
+                "workflow_count": {
+                    "type": "number"
+                },
+                "task_count": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "workflow_count",
+                "task_count"
+            ]
+        },
+        "AuthEvent": {
+            "type": "object",
+            "properties": {
+                "event_details": {
+                    "type": "string"
+                },
+                "required": [
+                    "event_details"
+                ]
+            }
+        },
+        "CatalogEvent": {
+            "type": "object",
+            "properties": {
+                "event_details": {
+                    "type": "string"
+                },
+                "required": [
+                    "event_details"
+                ]
+            }
+        },
+        "OrderingEvent": {},
+        "ProductCatalogerEvent": {},
+        "AcquisitionCatalogerEvent": {}
+        },
+        "required": [
+            "event_id",
+            "action",
+            "user_id",
+            "account_id",
+            "timestamp",
+            "event_type",
+            "source",
+            "properties",
+            "payload"
+        ],
+        "additionalProperties": false
+}
