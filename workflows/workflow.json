@@ -1,1 +1,32 @@
-
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "id": "urn:jsonschema:com:digitalglobe:events:WorkflowEventMessage",
+    "properties": {
+      "WorkflowEvent": {
+                  "type": "object",
+                  "properties": {
+                      "workflow_id": {
+                          "type": "string"
+                      },
+                      "workflow_name": {
+                          "type": "string"
+                      },
+                      "workflow_state": {
+                          "enum": [
+                              "submitted",
+                              "canceled",
+                              "failed",
+                              "succeeded",
+                              "timedout"
+                          ]
+                      }
+                  },
+                  "required": [
+                      "workflow_id",
+                      "workflow_name",
+                      "workflow_state"
+                  ]
+              }
+    }
+}
